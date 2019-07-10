@@ -6,11 +6,6 @@
     android:layout_height="match_parent"
     tools:context="com.haobi.news_1.MainActivity">
 
-    <com.haobi.news_1.splash.TimeView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/time"
-        app:ringColor="@android:color/holo_red_dark"
-        app:innerColor="@android:color/darker_gray"/>
+
     
 </RelativeLayout>

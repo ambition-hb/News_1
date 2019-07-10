@@ -11,7 +11,6 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 
 import com.haobi.news_1.R;
 
@@ -37,6 +36,8 @@ public class TimeView extends View {
     int degree;
     //矩形区域
     RectF outerRect;
+
+    OnTimeClickListener mListener;
 
     public TimeView(Context context) {
         super(context);
@@ -87,6 +88,10 @@ public class TimeView extends View {
         setMeasuredDimension(all, all);
     }
 
+    public void setListener(OnTimeClickListener listener){
+        this.mListener = listener;
+    }
+
     public void setD(int d){
         this.degree = d;
     }
@@ -131,6 +136,9 @@ public class TimeView extends View {
             case MotionEvent.ACTION_UP:
                 //透明
                 setAlpha(1.0f);
+                if (mListener != null){
+                    mListener.onClickTime(this);
+                }
                 break;
         }
         return true;

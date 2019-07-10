@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -18,6 +19,8 @@ import android.widget.ImageView;
 import com.haobi.news_1.MainActivity;
 import com.haobi.news_1.R;
 import com.haobi.news_1.service.DownloadImageService;
+import com.haobi.news_1.splash.OnTimeClickListener;
+import com.haobi.news_1.splash.TimeView;
 import com.haobi.news_1.splash.bean.Action;
 import com.haobi.news_1.splash.bean.Ads;
 import com.haobi.news_1.splash.bean.AdsDetail;
@@ -29,6 +32,7 @@ import com.haobi.news_1.util.SharePrenceUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import okhttp3.Call;
@@ -44,12 +48,20 @@ import okhttp3.Response;
 public class SplashActivity extends Activity {
     //广告图片
     ImageView ads_img;
+    //倒计时
+    TimeView time;
     //Json缓存
     static final String JSON_CACHE = "ads_Json";
     static final String JSON_CACHE_TIME_OUT = "ads_Json_time_out";
     static final String JSON_CACHE_LAST_SUCCESS = "ads_Json_last";
     static final String LAST_IMAGE_INDEX = "img_index";
-    Handler mHandler;
+
+    int length = 2*1000;
+    int space = 250;
+    int now = 0;
+    int total;
+
+    MyHandler mHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,22 +71,59 @@ public class SplashActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash);
         ads_img = (ImageView)findViewById(R.id.ads);
-        mHandler = new Handler();
-        getAds();
+        mHandler = new MyHandler(this);
+        time = (TimeView)findViewById(R.id.time);
+        time.setListener(new OnTimeClickListener() {
+            @Override
+            public void onClickTime(View view) {
+                //移除任务(点击掉过按钮后，就应该把定时移除)
+                mHandler.removeCallbacks(reshRing);
+                //直接跳转到MainActivity
+                gotoMain();
 
+            }
+        });
+
+        //刷新的次数
+        total = length/space;
+
+        mHandler.post(reshRing);
+
+        //获取广告
+        getAds();
+        //显示广告图片
         showImage();
 
+
     }
+
+    Runnable reshRing = new Runnable() {
+        @Override
+        public void run() {
+            //消息池中复用
+            Message message = mHandler.obtainMessage(0);
+            message.arg1 = now;
+            mHandler.sendMessage(message);
+            mHandler.postDelayed(this, space);
+            now++;
+        }
+    };
 
     Runnable NoPhotoGotoMain = new Runnable() {
         @Override
         public void run() {
 //            Log.i("测试6：", "run: ");
-            Intent intent = new Intent();
-            intent.setClass(SplashActivity.this, MainActivity.class);
-            startActivity(intent);
+            gotoMain();
         }
     };
+
+    //返回主界面
+    public void gotoMain(){
+        Intent intent = new Intent();
+        intent.setClass(SplashActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
     @Override
     protected void onDestroy() {
@@ -199,6 +248,38 @@ public class SplashActivity extends Activity {
                 }
             }
         });
+    }
+
+    //1-使用静态内部类切断访问activity
+    static class MyHandler extends Handler{
+        //2-使用弱引用持有对象
+        //弱引用：JVM无法保证它的存活
+        WeakReference<SplashActivity> activity;
+        //弱引用构造方法
+        public MyHandler(SplashActivity act){
+            this.activity = new WeakReference<SplashActivity>(act);
+        }
+        @Override
+        public void handleMessage(Message msg) {
+            //获取对象（弱引用在使用前要先取出来）
+            SplashActivity act = activity.get();
+            //如果被回收，则不做其他处理
+            if (act == null){
+                return;
+            }
+            switch (msg.what){
+                case 0:
+                    int now = msg.arg1;
+                    if (now <= act.total){
+                        act.time.setProgress(act.total, now);
+                    }else{
+                        //移除任务(点击掉过按钮后，就应该把定时移除)
+                        this.removeCallbacks(act.reshRing);
+                        act.gotoMain();
+                    }
+                    break;
+            }
+        }
     }
 
 }
