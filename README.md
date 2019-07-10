@@ -16,7 +16,9 @@
 内容：在MainActivity页面完成圆形自定义控件，使其①功能完整（倒计时）②能够交互③有一定自由度（刷新控件）<br>
 图四：圆型控件截图<br>
 ![](https://github.com/ambition-hb/News_1/raw/master/Pic/circular.png)<br>
-### Commits-5:AD Finish()<br>
+### Commits-5:AD Finish(广告页面完成点击事件)<br>
 内容：圆形控件与广告页面合并，并添加控件的点击事件,处理了Handler与Activity交互产生的内存泄漏问题，具体方法为：①使用静态内部类切断访问activity②使用弱引用持有对象<br>
 ![](https://github.com/ambition-hb/News_1/raw/master/Pic/ad_finish.png)<br>
-### Commits-6:XXX()<br>
+### Commits-6:Immersion Finish(引入沉浸式状态栏)<br>
+内容：引入沉浸式状态栏：①View.SYSTEM_UI_FLAG_FULLSCREEN(状态栏隐藏)②View.SYSTEM_UI_FLAG_HIDE_NAVIGATION(隐藏导航栏)③View.SYSTEM_UI_FLAG_IMMERSIVE(沉浸模式，隐藏状态栏和导航栏，并且在第一次会弹泡提醒，并且在状态栏区域滑动可以呼出状态栏。要想使它生效，需要和View.SYSTEM_UI_FLAG_FULLSCREEN，View.SYSTEM_UI_FLAG_HIDE_NAVIGATION其中的一个或两个同时设置。)<br>
+![](https://github.com/ambition-hb/News_1/raw/master/Pic/immersion.png)<br>

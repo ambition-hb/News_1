@@ -70,8 +70,12 @@ public class SplashActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash);
+        //引入沉浸式状态栏
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN|View.SYSTEM_UI_FLAG_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_IMMERSIVE);
+
         ads_img = (ImageView)findViewById(R.id.ads);
-        mHandler = new MyHandler(this);
+
         time = (TimeView)findViewById(R.id.time);
         time.setListener(new OnTimeClickListener() {
             @Override
@@ -87,6 +91,7 @@ public class SplashActivity extends Activity {
         //刷新的次数
         total = length/space;
 
+        mHandler = new MyHandler(this);
         mHandler.post(reshRing);
 
         //获取广告
