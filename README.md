@@ -25,3 +25,6 @@
 ### Commits-7:(Tab Finish)<br>
 内容：完成tab标签UI样式,实现文字和图片的selector,主要操作包括:①找到FragmentTabHost②绑定Fragment容器③生成不同的标签<br>
 ![](https://github.com/ambition-hb/News_1/raw/master/Pic/tab.bmp)<br>
+### Commits-8:(HomePageUI Finish)<br>
+内容:编写首页UI布局,,通过ViewPager与SmartTabLayout绑定的方式,在首页顶部引入滑动栏<br>
+![](https://github.com/ambition-hb/News_1/raw/master/Pic/hot_news.png)<br>

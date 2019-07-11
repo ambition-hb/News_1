@@ -49,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //(预留)设置预选择的tag页面
+        //tabHost.setCurrentTabByTag("1");
+
     }
 
     public View getEveryView(Context context, String[] titles, int[] icons, int index){
