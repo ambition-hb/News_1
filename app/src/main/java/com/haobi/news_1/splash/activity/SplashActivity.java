@@ -25,6 +25,8 @@ import com.haobi.news_1.splash.bean.Action;
 import com.haobi.news_1.splash.bean.Ads;
 import com.haobi.news_1.splash.bean.AdsDetail;
 import com.haobi.news_1.util.Constant;
+import com.haobi.news_1.util.HttpRespon;
+import com.haobi.news_1.util.HttpUtil;
 import com.haobi.news_1.util.ImageUtil;
 import com.haobi.news_1.util.JsonUtil;
 import com.haobi.news_1.util.Md5Helper;
@@ -84,7 +86,6 @@ public class SplashActivity extends Activity {
                 mHandler.removeCallbacks(reshRing);
                 //直接跳转到MainActivity
                 gotoMain();
-
             }
         });
 
@@ -117,7 +118,7 @@ public class SplashActivity extends Activity {
     Runnable NoPhotoGotoMain = new Runnable() {
         @Override
         public void run() {
-//            Log.i("测试6：", "run: ");
+            Log.i("测试6", "跳转到主界面");
             gotoMain();
         }
     };
@@ -211,49 +212,67 @@ public class SplashActivity extends Activity {
         }
     }
 
-    //获取广告数据（异步方式）
+    //获取广告数据（异步方式——封装）
     public void httpRequest(){
-        Log.i("测试5:", "httpRequest: ");
-        final OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(Constant.SPLASH_URL)
-                .build();
-        //开启一个异步请求
-        Call call = client.newCall(request);
-        call.enqueue(new Callback() {
+        Log.i("测试5", "httpRequest: ");
+        HttpUtil util = HttpUtil.getInstance();
+        util.getDate(Constant.SPLASH_URL, new HttpRespon<String>(String.class) {
             @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
+            public void onError(String msg) {
+                Log.i("测试8","error msg" + msg);
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if(!response.isSuccessful()){
-                    //请求失败
-                }
-                //获取数据
-                String data = response.body().string();
-                Ads ads = JsonUtil.parseJson(data, Ads.class);
-                if (ads != null){
-                    //请求成功
-//                    Log.i("测试1:", ads.toString());
-                    //Http成功后，缓存json
-                    SharePrenceUtil.saveString(SplashActivity.this, JSON_CACHE, data);
-                    ////Http成功后，缓存超时时间
-                    SharePrenceUtil.saveInt(SplashActivity.this, JSON_CACHE_TIME_OUT, ads.getNext_req());
-                    //Http成功后，缓存上次请求成功的时间
-                    SharePrenceUtil.saveLong(SplashActivity.this, JSON_CACHE_LAST_SUCCESS, System.currentTimeMillis());
+            public void onSuccess(String ads) {
+                Log.i("测试8","onSuccess" + ads.toString());
 
-                    Intent intent = new Intent();
-                    intent.setClass(SplashActivity.this, DownloadImageService.class);
-                    intent.putExtra(DownloadImageService.ADS_DATA, ads);
-                    startService(intent);
-                }else{
-                    //请求失败
-                }
             }
         });
     }
+
+    //获取广告数据（异步方式）
+//    public void httpRequest(){
+//        Log.i("测试5:", "httpRequest: ");
+//        final OkHttpClient client = new OkHttpClient();
+//        Request request = new Request.Builder()
+//                .url(Constant.SPLASH_URL)
+//                .build();
+//        //开启一个异步请求
+//        Call call = client.newCall(request);
+//        call.enqueue(new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                if(!response.isSuccessful()){
+//                    //请求失败
+//                }
+//                //获取数据
+//                String data = response.body().string();
+//                Ads ads = JsonUtil.parseJson(data, Ads.class);
+//                if (ads != null){
+//                    //请求成功
+////                    Log.i("测试1:", ads.toString());
+//                    //Http成功后，缓存json
+//                    SharePrenceUtil.saveString(SplashActivity.this, JSON_CACHE, data);
+//                    ////Http成功后，缓存超时时间
+//                    SharePrenceUtil.saveInt(SplashActivity.this, JSON_CACHE_TIME_OUT, ads.getNext_req());
+//                    //Http成功后，缓存上次请求成功的时间
+//                    SharePrenceUtil.saveLong(SplashActivity.this, JSON_CACHE_LAST_SUCCESS, System.currentTimeMillis());
+//
+//                    Intent intent = new Intent();
+//                    intent.setClass(SplashActivity.this, DownloadImageService.class);
+//                    intent.putExtra(DownloadImageService.ADS_DATA, ads);
+//                    startService(intent);
+//                }else{
+//                    //请求失败
+//                }
+//            }
+//        });
+//    }
 
     //1-使用静态内部类切断访问activity
     static class MyHandler extends Handler{
@@ -278,7 +297,7 @@ public class SplashActivity extends Activity {
                     if (now <= act.total){
                         act.time.setProgress(act.total, now);
                     }else{
-                        //移除任务(点击掉过按钮后，就应该把定时移除)
+                        //移除任务(点击跳过按钮后，就应该把定时移除)
                         this.removeCallbacks(act.reshRing);
                         act.gotoMain();
                     }

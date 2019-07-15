@@ -19,6 +19,7 @@
         android:layout_centerHorizontal="true"
         android:id="@id/title"
         android:textSize="12sp"
+        android:text="123"
         android:textColor="@color/tab_title_selector"/>
 
 </RelativeLayout>

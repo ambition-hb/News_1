@@ -8,5 +8,5 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="TextView" />
+        android:text="fragment_empty" />
 </RelativeLayout>

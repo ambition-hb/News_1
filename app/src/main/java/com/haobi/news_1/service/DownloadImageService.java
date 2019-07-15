@@ -50,12 +50,12 @@ public class DownloadImageService extends IntentService{
             if(null != imgs){
                 String img_url = imgs.get(0);
                 if (!TextUtils.isEmpty(img_url)){
-//                    Log.i("测试2：", img_url);
+                    Log.i("测试2", "img_url:"+img_url);
                     //图片地址转换成唯一的MD5文件名
                     String catch_name = Md5Helper.toMD5(img_url);
                     //先判断图片是否存在，如果存在则不下载
                     if(!ImageUtil.checkImageIsDownload(catch_name)){
-                        Log.d("测试4：", "正在下载");
+                        Log.d("测试4", "正在下载");
                         //下载图片（1文件是完整的2内容也是完整的）
                         downloadImage(img_url, catch_name);
 
@@ -106,7 +106,7 @@ public class DownloadImageService extends IntentService{
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 60, image_out);
                 image_out.flush();
                 image_out.close();
-                Log.d("测试3：", "下载完成");
+                Log.d("测试3", "下载完成");
             } catch (Exception e) {
                 e.printStackTrace();
             }

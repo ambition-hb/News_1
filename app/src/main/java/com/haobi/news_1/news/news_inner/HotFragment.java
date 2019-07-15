@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.haobi.news_1.R;
 
@@ -15,11 +16,15 @@ import com.haobi.news_1.R;
 
 public class HotFragment extends Fragment {
 
+    ListView mListView;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //将布局文件转化为view，但同时带上参数
         View view = inflater.inflate(R.layout.fragment_hot, container, false);
+        mListView = (ListView) view.findViewById(R.id.listView);
         return view;
+
     }
 }

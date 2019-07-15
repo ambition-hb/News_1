@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener(){
             @Override
             public void onTabChanged(String tabId) {
-                Log.i("测试7：", "tabId = "+tabId);
+                Log.i("测试7", "tabId = "+tabId);
             }
         });
 
