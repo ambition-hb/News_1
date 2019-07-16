@@ -10,9 +10,9 @@
     </string-array>
 
     <string-array name="news_titles">
+        <item>热点</item>
         <item>头条</item>
         <item>娱乐</item>
-        <item>热点</item>
         <item>体育</item>
         <item>本地</item>
         <item>网易号</item>

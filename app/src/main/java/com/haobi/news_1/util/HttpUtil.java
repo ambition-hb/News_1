@@ -12,7 +12,7 @@ import okhttp3.Response;
  * Created by 15739 on 2019/7/15.
  */
 
-public class HttpUtil {
+public class  HttpUtil {
     static HttpUtil util;
     static OkHttpClient client;
 
