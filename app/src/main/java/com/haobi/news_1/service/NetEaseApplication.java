@@ -25,8 +25,6 @@ public class NetEaseApplication extends Application{
         }
 
         //全局显示的设置类
-        //ImageLoaderConfiguration imageLoder的配置类,createDefault 创建一个默认的显示配置
-        //ImageLoaderConfiguration configuration = ImageLoaderConfiguration.createDefault(this);
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).discCache(new UnlimitedDiskCache(image_loader_cache)).diskCacheFileNameGenerator(new Md5FileNameGenerator()).build();
         //使用前必须初始化
         ImageLoader.getInstance().init(config);

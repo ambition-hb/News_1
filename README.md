@@ -28,7 +28,7 @@
 （5）在drawable文件夹下新建五个图标自定义颜色的selector（注意，默认的selector必须放在最下面），实现点击前后的图标状态，分别为：news_selector.xml、reading_selector.xml、video_selector.xml、topic_selector.xml、mine_selector.xml，此外，我们将主页底部标题栏的文字输入到String.xml中，写成配置文件，方便修改<br>
 （6）在MainActivity中获取tab的标题和背景图，并通过getEveryView()方法将layout布局转化成一个View，为每个标签设置好标题和图片，接着我们使用setIndicator()方法，将我们自定义View设置给每一个TabSpec<br>
 （7）至此，图片点击会变色，而文字颜色不能变化，需要自定义文字颜色的selector，我们在res目录下新建color文件夹（用于文字selector），新建tab_title_selector，用于主页底部导航栏文字的selector<br>
-### 3、主页底部导航栏——新闻界面（热点、头条、娱乐、体育、本地、网易号、财经、科技、汽车）<br>
+### 3、主页新闻界面（热点、头条、娱乐、体育、本地、网易号、财经、科技、汽车）<br>
 包含Commits-8→Commits-9，详细步骤如下：<br>
 （1）由于FragmentTabHost里有5个Fragment，我们先完善第一个Fragment，由于新闻界面标签栏以下的内容能够滑动切换，我们选择了ViewPager作为容器，通过ViewPager，Fragment又可以再装一系列的Fragment，编写fragment_new.xml布局文件<br>
 （2）为了实现顶部可滑动的标题栏，我们引入第三方控件SmartTabLayout，在build.gradle中添加依赖（compile 'com.ogaclejapan.smarttablayout:library:1.6.1@aar'和compile 'com.ogaclejapan.smarttablayout:utils-v4:1.6.1@aar'），引入成功后，我们开始使用SmartTabLayout<br>
@@ -42,7 +42,12 @@
 （2）由于我们要通过ListView来显示新闻，需要借助适配器（adapter）将数据传递给ListView，因此在news.adapter包下新建HotAdapter（热点新闻的适配器），这个适配器继承自BaseAdapter，并将泛型类型指定为HotDetail类，在layout文件夹下新建item_hot.xml布局文件，作为ListView的布局，为了统一管理显示的字体大小及颜色，我们修改styles.xml文件并将其引入item_hot.xml布局文件中<br>
 （3）修改HotAdapter文件，通过ViewHolder来提升ListView的效率，采用弱引用，处理了Handler与Activity交互产生的内存泄漏问题，由于OkHttp异步请求是在子线程中进行，所以我们不能在onActivityCreated()方法的回调中更新UI，必须搭配Handler，编写完HotAdapter文件，就可以基本显示新闻文本数据<br>
 （4）为了显示图片，我们引入UniversalImageLoader来加载图片，为了使用UniversalImageLoader，我们必须先初始化（最好的初始化方法就是在Application中初始化），因此我们在service包下新建NetEaseApplication类使其继承自Application，需要注意的是，自定义的application需配置后才能生效，因此我们在AndroidManifest.xml文件中添加application的配置<br>
-（5）未完待续...<br>
+（5）ListView效果显示完成后，我们开始增加轮播图，在layout文件夹下新建include_banner.xml布局文件作为轮播图的布局，编辑布局文件的内容，修改news.news_inner包下的HotFragment文件，将轮播图控件加入ListView，在news.adapter包中新建BannerAdapter类，使其继承自PagerAdapter<br>
+（6）在layout文件夹下创建item_banner.xml布局文件作为轮播图的子布局，并将其加载到HotFragment中，至此，已经可以初步显示出轮播图，但是没有标题与指示点，修改include_banner.xml与HotFragment文件，为了显示指示圆点，我们在drawable文件夹下新建gray_dot.xml和white_dot文件，用来表示不同的指示圆点，至此，我们可以完全显示热点新闻<br>
+（7）<br>
+（8）<br>
+（9）<br>
+（10）未完待续...<br>
 ### Commits-1:Initial Commit<br>
 内容：初始化<br>
 ### Commits-2:Create Peoject<br>
@@ -76,3 +81,6 @@
 ### Commits-10:(HotNewsData Finish)<br>
 内容：请求并显示热点新闻的数据<br>
 ![](https://github.com/ambition-hb/News_1/raw/master/Pic/hotnews_data.png)<br>
+### Commits-11:(BannerData Finish)<br>
+内容：请求并显示轮播图的数据（由于数据源的问题，图片暂时无法获取）<br>
+![](https://github.com/ambition-hb/News_1/raw/master/Pic/banner_data.png)<br>

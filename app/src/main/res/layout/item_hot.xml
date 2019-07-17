@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp">
 
     <ImageView
         android:layout_width="100dp"
         android:layout_height="65dp"
         android:id="@+id/img"
         android:layout_alignParentLeft="true"
-        android:padding="5dp"
+        android:padding="2dp"
         android:scaleType="fitXY" />
 
     <TextView
@@ -18,7 +20,7 @@
         android:layout_toRightOf="@id/img"
         android:layout_marginLeft="5dp"
         android:id="@+id/title"
-        android:textSize="12sp"
+        android:textSize="15sp"
         android:textColor="@android:color/black"
         android:text="新闻标题" />
 

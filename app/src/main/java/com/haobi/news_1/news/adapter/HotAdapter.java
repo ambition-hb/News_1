@@ -28,7 +28,7 @@ public class HotAdapter extends BaseAdapter {
 
     ArrayList<HotDetail> mHotDetails;
     LayoutInflater mInflater;
-    //这个类的显示的配置类
+    //这个类的显示的配置类（单次）
     DisplayImageOptions mOptions;
 
 
@@ -101,22 +101,22 @@ public class HotAdapter extends BaseAdapter {
         ImageLoader.getInstance().displayImage(detail.getImg(), hoder.icon, mOptions, new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
-                Log.i("测试12","onLoadingStarted");
+                Log.i("测试12","开始加载");
             }
 
             @Override
             public void onLoadingFailed(String s, View view, FailReason failReason) {
-
+                Log.i("测试13", "加载失败");
             }
 
             @Override
             public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-                Log.i("测试13","onLoadingComplete");
+                Log.i("测试14","加载成功");
             }
 
             @Override
             public void onLoadingCancelled(String s, View view) {
-
+                Log.i("测试15", "加载取消");
             }
         });
 
