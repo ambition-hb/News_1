@@ -12,12 +12,17 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.haobi.news_1.news.fragment.EmptyFragment;
 import com.haobi.news_1.news.fragment.NewsFragment;
 import com.haobi.news_1.splash.TimeView;
 
+import okhttp3.OkHttpClient;
+
 public class MainActivity extends AppCompatActivity {
+
+    long lastbacktime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,4 +70,17 @@ public class MainActivity extends AppCompatActivity {
         return title_view;
     }
 
+    @Override
+    public void onBackPressed() {
+        //1、先取到当前的时间
+        long now =  System.currentTimeMillis();
+        //2、此时lastbacktime初始值为0，now是一个很大的值
+        if(now - lastbacktime < 1000){
+            finish();
+        }else{
+            Toast.makeText(this, "再按一次退出网易新闻", Toast.LENGTH_SHORT).show();
+        }
+        //3、获取到当前的时间
+        lastbacktime = now;
+    }
 }

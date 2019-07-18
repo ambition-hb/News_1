@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -33,7 +34,7 @@ import java.util.List;
  * Created by 15739 on 2019/7/11.
  */
 
-public class HotFragment extends Fragment implements ViewPager.OnPageChangeListener{
+public class HotFragment extends Fragment implements ViewPager.OnPageChangeListener, AbsListView.OnScrollListener{
 
     ListView mListView;
 
@@ -47,14 +48,25 @@ public class HotFragment extends Fragment implements ViewPager.OnPageChangeListe
     HotAdapter adapter;
     LayoutInflater inflater;
 
+    boolean isToEnd = false;
+    boolean isHttpRequestIng = false;
+
     //刷新数据成功
     private final static int INIT_SUCCESS = 0;
+    //加载更多数据成功
+    private final static int UPDATE_SUCCESS = 1;
 
     //轮播图->相关的控件
     ViewPager viewpager;
     BannerAdapter bAdapter;
     TextView bannerTitle;
     LinearLayout dots;
+
+    int startIndex = 0;
+    int endIndex = 0;
+    int pageSize = 20;
+    //取页面的次数
+    int count = 0;
 
     @Nullable
     @Override
@@ -69,59 +81,110 @@ public class HotFragment extends Fragment implements ViewPager.OnPageChangeListe
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        initCollection();
+        initView();
+        getData(true);
+
+
+    }
+
+    private void initCollection() {
         mBanners = new ArrayList<>();
         mHotDetails = new ArrayList<>();
         views = new ArrayList<>();
         dot_imgs = new ArrayList<>();
+    }
 
+    private void initView() {
         mHandler = new MyHandler(this);
 
         inflater = LayoutInflater.from(getActivity());
         View head = inflater.inflate(R.layout.include_banner, null);
         //将轮播图控件加入ListView
         mListView.addHeaderView(head);
+        //为ListView增加滚动监督
+        mListView.setOnScrollListener(this);
         //将ViewPager加到ListView头部
         viewpager = (ViewPager) head.findViewById(R.id.viewpager);
         viewpager.addOnPageChangeListener(this);
         bannerTitle = (TextView) head.findViewById(R.id.title);
         dots = (LinearLayout)head.findViewById(R.id.dots);
+    }
 
-
+    //isInit 来标示是否是第一次取数据
+    private void getData(final boolean isInit) {
+        if(isHttpRequestIng){
+            return;
+        }
+        isHttpRequestIng = true;
         //请求热点新闻数据
         HttpUtil util = HttpUtil.getInstance();
-        util.getDate(Constant.HOT_URL, new HttpRespon<Hot>(Hot.class) {
+        calIndex();
+        String url = Constant.getHotUrl(startIndex,endIndex);
+        util.getDate(url, new HttpRespon<Hot>(Hot.class) {
             @Override
             public void onError(String msg) {
-
+                isHttpRequestIng = false;
             }
 
             @Override
             public void onSuccess(Hot hot) {
+                isHttpRequestIng = false;
                 //获取列表的数据
                 if(null!=hot&&null!=hot.getT1348647909107()){
+                    count++;
                     Log.i("测试10", "热点新闻数据获取成功");
                     List<HotDetail> details = hot.getT1348647909107();
-                    //取出第0位包含轮播图的数据
-                    HotDetail tmp_baner = details.get(0);
-                    List<Banner> banners = tmp_baner.getAds();
-                    //获取轮播图片成功
-                    mBanners.addAll(banners);
-                    //删除轮播图片数据
+                    if (isInit){
+                        //取出第0位包含轮播图的数据
+                        HotDetail tmp_baner = details.get(0);
+                        List<Banner> banners = tmp_baner.getAds();
+                        //获取轮播图片成功
+                        mBanners.addAll(banners);
+                        //删除轮播图片数据
 //                    details.remove(0);
-                    details.remove(2);
-                    details.remove(1);
-                    //列表数据加载完成
-                    mHotDetails.addAll(details);
-                    //获取数据完毕，发送消息更新UI(异步线程无法更改UI)
-                    mHandler.sendEmptyMessage(INIT_SUCCESS);
+                        details.remove(2);
+                        details.remove(1);
+                        //列表数据加载完成
+                        mHotDetails.addAll(details);
+                        //获取数据完毕，发送消息更新UI(异步线程无法更改UI)
+                        mHandler.sendEmptyMessage(INIT_SUCCESS);
+                    }else{
+                        Message message = mHandler.obtainMessage(UPDATE_SUCCESS);
+                        message.obj = details;
+                        mHandler.sendMessage(message);
+                    }
                 }
             }
         });
     }
 
+    //计算我们的url角标
+    public void calIndex(){
+        if(count==0){
+            endIndex = startIndex+20;
+
+        }else{
+            startIndex = endIndex;
+            endIndex = startIndex+20;
+        }
+
+    }
+
     public  void initDate(){
         adapter = new HotAdapter(mHotDetails,getActivity());
         mListView.setAdapter(adapter);
+    }
+
+    public void update(List<HotDetail> newDate){
+        if(null==adapter){
+            mHotDetails = new ArrayList<>();
+            mHotDetails.addAll(newDate);
+            adapter = new HotAdapter(mHotDetails, getActivity());
+            mListView.setAdapter(adapter);
+        }else{
+            adapter.addData(newDate);
+        }
     }
 
     public void initBanner() {
@@ -146,9 +209,6 @@ public class HotFragment extends Fragment implements ViewPager.OnPageChangeListe
             //设置默认显示的数据
             setImageDot(0);
             setBannerTitle(0);
-//            bannerTitle.setText(mBanners.get(0).getTitle());
-
-
         }
     }
 
@@ -188,6 +248,23 @@ public class HotFragment extends Fragment implements ViewPager.OnPageChangeListe
 
     }
 
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if(scrollState == SCROLL_STATE_IDLE&&isToEnd){
+            //获取更多数据
+            getData(false);
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        if(view.getLastVisiblePosition()==totalItemCount-1){
+            isToEnd = true;
+        }else{
+            isToEnd = false;
+        }
+    }
+
     static class MyHandler extends Handler {
         WeakReference<HotFragment> weak_fragment ;
 
@@ -206,6 +283,10 @@ public class HotFragment extends Fragment implements ViewPager.OnPageChangeListe
                     Log.i("测试11","成功更新热点新闻");
                     hot.initDate();
                     hot.initBanner();
+                    break;
+                case UPDATE_SUCCESS:
+                    List<HotDetail> date = (List<HotDetail>) msg.obj;
+                    hot.update(date);
                     break;
                 default:
                     break;

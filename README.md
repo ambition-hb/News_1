@@ -43,9 +43,9 @@
 （3）修改HotAdapter文件，通过ViewHolder来提升ListView的效率，采用弱引用，处理了Handler与Activity交互产生的内存泄漏问题，由于OkHttp异步请求是在子线程中进行，所以我们不能在onActivityCreated()方法的回调中更新UI，必须搭配Handler，编写完HotAdapter文件，就可以基本显示新闻文本数据<br>
 （4）为了显示图片，我们引入UniversalImageLoader来加载图片，为了使用UniversalImageLoader，我们必须先初始化（最好的初始化方法就是在Application中初始化），因此我们在service包下新建NetEaseApplication类使其继承自Application，需要注意的是，自定义的application需配置后才能生效，因此我们在AndroidManifest.xml文件中添加application的配置<br>
 （5）ListView效果显示完成后，我们开始增加轮播图，在layout文件夹下新建include_banner.xml布局文件作为轮播图的布局，编辑布局文件的内容，修改news.news_inner包下的HotFragment文件，将轮播图控件加入ListView，在news.adapter包中新建BannerAdapter类，使其继承自PagerAdapter<br>
-（6）在layout文件夹下创建item_banner.xml布局文件作为轮播图的子布局，并将其加载到HotFragment中，至此，已经可以初步显示出轮播图，但是没有标题与指示点，修改include_banner.xml与HotFragment文件，为了显示指示圆点，我们在drawable文件夹下新建gray_dot.xml和white_dot文件，用来表示不同的指示圆点，至此，我们可以完全显示热点新闻<br>
-（7）<br>
-（8）<br>
+（6）在layout文件夹下创建item_banner.xml布局文件作为轮播图的子布局，并将其加载到HotFragment中，至此，已经可以初步显示出轮播图，但是没有标题与指示点，修改include_banner.xml与HotFragment文件，为了显示指示圆点，我们在drawable文件夹下新建gray_dot.xml和white_dot文件，用来表示不同的指示圆点，在读取数据时，将圆点动态的添加到布局内部，至此，我们可以完全显示热点新闻<br>
+（7）完善轮播图，在drawable文件夹下新建title_back.xml的shape文件，使轮播图的背景自底向上是由黑到透明渐变的，并将其添加到layout文件夹下的include_banner.xml布局文件中，实现了轮播图背景的渐变效果，更好的显示新闻标题<br>
+（8）修改news.adapter包下的HotFragment文件，让热点新闻页面显示更多，并修改util包下的Constant文件，修改热点新闻的URL，使其能够动态扩展，在HotAdapter类中添加addData()方法，为了实现“再按一次退出网易新闻”功能，我们在MainActivity中重写onBackPressed()方法，通过判断点击时间来实现Toast<br>
 （9）<br>
 （10）未完待续...<br>
 ### Commits-1:Initial Commit<br>
@@ -84,3 +84,5 @@
 ### Commits-11:(BannerData Finish)<br>
 内容：请求并显示轮播图的数据（由于数据源的问题，图片暂时无法获取）<br>
 ![](https://github.com/ambition-hb/News_1/raw/master/Pic/banner_data.png)<br>
+### Commits-12:(GetMoreData Finish)<br>
+内容：完善轮播图背景，完成下滑热点新闻界面显示出更多的新闻，并实现“再按一次退出网易新闻”功能<br>
