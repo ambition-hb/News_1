@@ -37,7 +37,7 @@
 （5）我们将新闻页面顶部标题栏的文字写入到String.xml中，写成配置文件，方便修改，并减少硬编码，在news.news_inner包（用于存放新闻页面的Fragment）中创建HotFragment文件（用于表示热点新闻的Fragment），在layout文件夹下添加fragment_hot.xml布局文件，并在HotFragment文件中将fragment_hot.xml布局文件转化为view，修改NewsFragment文件，获取标题字符串数组，设置if-else，先生成一个页面,其余的置为空<br>
 （6）之后的操作中会遇到重复的网络请求代码，由于在SplashActivity的httpRequest()方法中我门编写过Http请求，因此我们抽取Http请求，使其在整个应用中只创建一次，使用单例设计模式，在util包下新建HttpUtil类和HttpRespon类（回调类——监控一个对象的事件变化），将其封装成一个工具类<br>
 ### 4、新闻界面——热点<br>
-包含Commits-10→Commits-x，详细步骤如下：<br>
+包含Commits-10→Commits-12，详细步骤如下：<br>
 （1）在news.bean包下新建Hot（热点新闻）、HotDetail（热点新闻详细数据）以及Banner（轮播图）三个文件夹，用于解析热点新闻数据，修改HotFragment，用于请求热点新闻的数据，修改util包下的Constant文件，向其中添加热门页面的url<br>
 （2）由于我们要通过ListView来显示新闻，需要借助适配器（adapter）将数据传递给ListView，因此在news.adapter包下新建HotAdapter（热点新闻的适配器），这个适配器继承自BaseAdapter，并将泛型类型指定为HotDetail类，在layout文件夹下新建item_hot.xml布局文件，作为ListView的布局，为了统一管理显示的字体大小及颜色，我们修改styles.xml文件并将其引入item_hot.xml布局文件中<br>
 （3）修改HotAdapter文件，通过ViewHolder来提升ListView的效率，采用弱引用，处理了Handler与Activity交互产生的内存泄漏问题，由于OkHttp异步请求是在子线程中进行，所以我们不能在onActivityCreated()方法的回调中更新UI，必须搭配Handler，编写完HotAdapter文件，就可以基本显示新闻文本数据<br>
@@ -46,8 +46,15 @@
 （6）在layout文件夹下创建item_banner.xml布局文件作为轮播图的子布局，并将其加载到HotFragment中，至此，已经可以初步显示出轮播图，但是没有标题与指示点，修改include_banner.xml与HotFragment文件，为了显示指示圆点，我们在drawable文件夹下新建gray_dot.xml和white_dot文件，用来表示不同的指示圆点，在读取数据时，将圆点动态的添加到布局内部，至此，我们可以完全显示热点新闻<br>
 （7）完善轮播图，在drawable文件夹下新建title_back.xml的shape文件，使轮播图的背景自底向上是由黑到透明渐变的，并将其添加到layout文件夹下的include_banner.xml布局文件中，实现了轮播图背景的渐变效果，更好的显示新闻标题<br>
 （8）修改news.adapter包下的HotFragment文件，让热点新闻页面显示更多，并修改util包下的Constant文件，修改热点新闻的URL，使其能够动态扩展，在HotAdapter类中添加addData()方法，为了实现“再按一次退出网易新闻”功能，我们在MainActivity中重写onBackPressed()方法，通过判断点击时间来实现Toast<br>
-（9）<br>
-（10）未完待续...<br>
+### 5、热点新闻界面——详情页面<br>
+包含Commits-13→Commits-x，详细步骤如下：<br>
+（1）在news包下新建activity文件夹，在文件夹中先新建一个DetailActivity类使其继承自Activity，在layout文件夹下新建activity_detail.xml布局文件，并添加布局，注意在AndroidManifest.xml中注册DetailActivity<br>
+（2）修改HotFragment，为ListView增加一个点击事件，修改HotAdapter，添加getDateByIndex()方法，为了实现滑动进入详情页面的效果，在res目录下新建anim文件夹，在anim文件夹中创建activity_in.xml和activity_in.xml<br>
+（3）修改Constant类，添加详情页面的地址，在news.bean包中新建DetailWeb类和DetailWebImage类，来封装详情页面的数据，为了添加详情页面的滑动退出功能，我们在build.gradle文件中引入了SwipeBackLayout的依赖库，在操作之前首先绑定swipeLayout，然后将需要右滑退出的界面（DetailActivity）继承SwipeBackActivity，滑动关闭当前页面的方向有四种形式：1、SwipeBackLayout.EDGE_RIGHT 右边关闭页面；2、SwipeBackLayout.EDGE_LEFT 左边关闭页面；3、SwipeBackLayout.EDGE_BOTTOM 底部关闭页面；4、SwipeBackLayout.EDGE_ALL 以上三种形式关闭页面；<br>
+（4）修改AndroidManifest.xml与style.xml文件，给DetailActivity的滑动退出设置背景，使得滑动退出时可看见详情页面，在news.activity包下新建DetailImageActivity文件，使其继承自Activity，并在layout目录下创建其对应的布局文件activity_detail_image.xml，最后在AndroidManifest.xml中注册DetailImageActivity活动，为了实现点击新闻图片有方法缩小的效果，我们引入PhotoView这个开源框架，在build.gradle中添加依赖库，并将其引入activity_detail_image.xml布局文件中，在DetailActivity中为详情新闻的图片增加点击事件<br>
+（5）在news.adapter包下新建DetailImageAdapter文件，使其继承自PagerAdapter，为了更高的展示点击图片后的图片详情页面，我们新建DetailImageAdapter文件的布局文件item_detail_img.xml，为了在进程间传递对象，我们将DetailWebImage类实现了Serializable接口<br>
+（6）未完待续...<br>
+（7）未完待续...<br>
 ### Commits-1:Initial Commit<br>
 内容：初始化<br>
 ### Commits-2:Create Peoject<br>
@@ -86,3 +93,6 @@
 ![](https://github.com/ambition-hb/News_1/raw/master/Pic/banner_data.png)<br>
 ### Commits-12:(GetMoreData Finish)<br>
 内容：完善轮播图背景，完成下滑热点新闻界面显示出更多的新闻，并实现“再按一次退出网易新闻”功能<br>
+### Commits-13:(HotPic Finish)<br>
+内容：完成热点新闻的详情界面，实现点击图片放大放小、新闻侧滑退出等功能<br>
+![](https://github.com/ambition-hb/News_1/raw/master/Pic/hot_pic.png)<br>

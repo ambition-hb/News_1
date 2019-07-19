@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public class JsonUtil {
 
-    private static Gson mGson;
+    static Gson mGson;
     //<T> 代表声明使用泛型
     //第二个T 代表返回的类型是我们使用的类型
     //Class<T> 代表类型.class

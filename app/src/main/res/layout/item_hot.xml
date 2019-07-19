@@ -10,7 +10,7 @@
         android:layout_height="65dp"
         android:id="@+id/img"
         android:layout_alignParentLeft="true"
-        android:padding="2dp"
+        android:padding="5dp"
         android:scaleType="fitXY" />
 
     <TextView
@@ -20,7 +20,7 @@
         android:layout_toRightOf="@id/img"
         android:layout_marginLeft="5dp"
         android:id="@+id/title"
-        android:textSize="15sp"
+        android:textSize="12sp"
         android:textColor="@android:color/black"
         android:text="新闻标题" />
 

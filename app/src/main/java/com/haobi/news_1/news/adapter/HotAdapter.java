@@ -131,6 +131,11 @@ public class HotAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public HotDetail getDateByIndex(int index){
+        HotDetail detail = mHotDetails.get(index);
+        return  detail;
+    }
+
     //定义ViewHolder内部类，用于对控件实例进行缓存
     class ViewHolder {
         ImageView icon;

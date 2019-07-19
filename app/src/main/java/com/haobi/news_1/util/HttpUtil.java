@@ -1,6 +1,9 @@
 package com.haobi.news_1.util;
 
+import android.util.Log;
+
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -18,7 +21,11 @@ public class  HttpUtil {
 
 
     private HttpUtil(){
-        client = new OkHttpClient();
+        client = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .build();
     }
 
     //单例的方法
@@ -46,19 +53,18 @@ public class  HttpUtil {
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
                 respon.onError("连接服务器失败");
+                Log.i("测试-网络请求1", "请求服务器失败！ ");
             }
-
             //有响应
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     //请求失败
                     respon.onError("连接服务器失败");
+                    Log.i("测试-网络请求2", "服务器响应失败！ ");
                 }
-
                 //获取到接口的数据
                 String date = response.body().string();
-
                 respon.parse(date);
             }
         });

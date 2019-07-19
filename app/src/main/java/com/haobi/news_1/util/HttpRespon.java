@@ -1,6 +1,7 @@
 package com.haobi.news_1.util;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 /**
  * Created by 15739 on 2019/7/15.
@@ -24,6 +25,7 @@ public abstract class HttpRespon<T> {
         if(TextUtils.isEmpty(json)){
             //请求失败
             onError("连接网络失败");
+            Log.i("测试-网络请求3", "连接网络失败");
             return;
         }
         //如果我们需要的是JSON的原字符串，直接返回
@@ -40,6 +42,7 @@ public abstract class HttpRespon<T> {
             onSuccess(result);
         }else{
             onError("json解析失败");
+            Log.i("测试-网络请求1", "json解析失败");
         }
     }
 }

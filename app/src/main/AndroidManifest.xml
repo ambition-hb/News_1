@@ -24,6 +24,8 @@
         <activity android:name=".splash.activity.WebViewActivity"/>
         <activity android:name=".MainActivity"/>
         <service android:name=".service.DownloadImageService"/>
+        <activity android:name=".news.activity.DetailActivity" android:theme="@style/back_transparent"/>
+        <activity android:name=".news.activity.DetailImageActivity"/>
     </application>
 
 </manifest>

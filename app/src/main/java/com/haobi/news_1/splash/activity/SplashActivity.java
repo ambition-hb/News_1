@@ -73,12 +73,24 @@ public class SplashActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash);
         //引入沉浸式状态栏
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN|View.SYSTEM_UI_FLAG_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_IMMERSIVE);
+//        View decorView = getWindow().getDecorView();
+//        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN|View.SYSTEM_UI_FLAG_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_IMMERSIVE);
 
+        initView();
+
+        //获取广告
+        getAds();
+        //显示广告图片
+        showImage();
+
+
+    }
+
+    private void initView() {
         ads_img = (ImageView)findViewById(R.id.ads);
 
         time = (TimeView)findViewById(R.id.time);
+        time.setVisibility(View.GONE);
         time.setListener(new OnTimeClickListener() {
             @Override
             public void onClickTime(View view) {
@@ -93,14 +105,6 @@ public class SplashActivity extends Activity {
         total = length/space;
 
         mHandler = new MyHandler(this);
-        mHandler.post(reshRing);
-
-        //获取广告
-        getAds();
-        //显示广告图片
-        showImage();
-
-
     }
 
     Runnable reshRing = new Runnable() {
@@ -138,8 +142,8 @@ public class SplashActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        mHandler.removeCallbacks(NoPhotoGotoMain);
         super.onBackPressed();
+        mHandler.removeCallbacks(reshRing);
     }
 
     //显示图片
@@ -148,6 +152,9 @@ public class SplashActivity extends Activity {
         String cache = SharePrenceUtil.getString(this, JSON_CACHE);
         //如果有缓存且不为空
         if (!TextUtils.isEmpty(cache)){
+            //只有显示了广告图的情况下才显示倒数控件
+            time.setVisibility(View.VISIBLE);
+            mHandler.post(reshRing);
             // /读出这次显示的图片中的角标
             int index = SharePrenceUtil.getInt(this, LAST_IMAGE_INDEX);
             //转化成对象
@@ -183,6 +190,9 @@ public class SplashActivity extends Activity {
                                     intent.setClass(SplashActivity.this, WebViewActivity.class);
                                     intent.putExtra(WebViewActivity.ACTION_NAME, action);
                                     startActivity(intent);
+                                    finish();
+                                    //跳转到web广告页面后也要把倒数清空
+                                    mHandler.removeCallbacks(reshRing);
                                 }
                             }
                         });

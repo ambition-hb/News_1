@@ -16,6 +16,15 @@ public class HotDetail {
     String source;
     int replyCount;
     String specialID;
+    String docid;
+
+    public String getDocid() {
+        return docid;
+    }
+
+    public void setDocid(String docid) {
+        this.docid = docid;
+    }
 
     public List<Banner> getAds() {
         return ads;

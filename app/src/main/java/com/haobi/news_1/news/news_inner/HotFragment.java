@@ -1,5 +1,6 @@
 package com.haobi.news_1.news.news_inner;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,12 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.haobi.news_1.R;
+import com.haobi.news_1.news.activity.DetailActivity;
 import com.haobi.news_1.news.adapter.BannerAdapter;
 import com.haobi.news_1.news.adapter.HotAdapter;
 import com.haobi.news_1.news.bean.Banner;
@@ -75,7 +78,6 @@ public class HotFragment extends Fragment implements ViewPager.OnPageChangeListe
         View view = inflater.inflate(R.layout.fragment_hot, container, false);
         mListView = (ListView) view.findViewById(R.id.listView);
         return view;
-
     }
 
     @Override
@@ -84,8 +86,6 @@ public class HotFragment extends Fragment implements ViewPager.OnPageChangeListe
         initCollection();
         initView();
         getData(true);
-
-
     }
 
     private void initCollection() {
@@ -104,6 +104,19 @@ public class HotFragment extends Fragment implements ViewPager.OnPageChangeListe
         mListView.addHeaderView(head);
         //为ListView增加滚动监督
         mListView.setOnScrollListener(this);
+        //为ListView添加点击事件
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i("测试16", "捕获ListView点击事件 ");
+                Intent intent = new Intent();
+                intent.setClass(getActivity(), DetailActivity.class);
+                HotDetail detail = adapter.getDateByIndex(position-mListView.getHeaderViewsCount());
+                intent.putExtra(DetailActivity.DOCID, detail.getDocid());
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+            }
+        });
         //将ViewPager加到ListView头部
         viewpager = (ViewPager) head.findViewById(R.id.viewpager);
         viewpager.addOnPageChangeListener(this);
