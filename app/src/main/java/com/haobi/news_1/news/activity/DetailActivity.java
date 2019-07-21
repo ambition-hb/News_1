@@ -74,8 +74,9 @@ public class DetailActivity extends SwipeBackActivity {
         parent = (RelativeLayout) findViewById(R.id.parent);
 
         final Drawable left = getResources().getDrawable(R.drawable.biz_pc_main_tie_icon);
-        //setBounds->设置DrawAbleLeft
+        //setBounds->设置DrawAbleLeft（设置显示的区域）
         left.setBounds(0,0,30,30);
+        //监听焦点
         feeback.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean fouces) {
@@ -99,6 +100,15 @@ public class DetailActivity extends SwipeBackActivity {
 
         mWebView.getSettings().setJavaScriptEnabled(true);
         replayCountTextView = (TextView) findViewById(R.id.replayCount);
+        replayCountTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(DetailActivity.this, FeedBackActivity.class);
+                intent.putExtra(DOCID, doc_Id);
+                startActivity(intent);
+            }
+        });
         mWebView.addJavascriptInterface(this,"demo");
 
 
