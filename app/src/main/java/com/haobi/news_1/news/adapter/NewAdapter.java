@@ -30,8 +30,19 @@ public class NewAdapter extends FragmentStatePagerAdapter {
         return mFragments.size();
     }
 
+    //需要刷新ViewPager的话,我们必须重写getItemPosition->POSITION_NONE
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
+
     @Override
     public CharSequence getPageTitle(int position) {
         return  mFragments.get(position).getTitle();
+    }
+
+    public void setDate(ArrayList<FragmentInfo> mFragments){
+        this.mFragments = mFragments;
+        notifyDataSetChanged();
     }
 }

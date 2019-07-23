@@ -33,7 +33,7 @@ public class ShowAdapter extends BaseAdapter{
         mContext = context;
     }
 
-    public  ShowAdapter(Context context){
+    public ShowAdapter(Context context){
         this.titles = new ArrayList<>();
         mContext = context;
     }
@@ -52,7 +52,7 @@ public class ShowAdapter extends BaseAdapter{
         return  builder.toString();
     }
 
-    public String  delATitle(int index){
+    public String delATitle(int index){
         String title = titles.get(index);
         titles.remove(index);
         notifyDataSetChanged();
@@ -103,6 +103,7 @@ public class ShowAdapter extends BaseAdapter{
             convertView = View.inflate(mContext, R.layout.item_show,null);
             hoder = new ViewHoder();
             hoder.title = (TextView) convertView.findViewById(R.id.title);
+            //删除
             hoder.del = (ImageView) convertView.findViewById(R.id.del);
             convertView.setTag(hoder);
         }else{

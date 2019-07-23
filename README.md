@@ -61,7 +61,7 @@
 （3）由于HttpUtil是运行在子线程的，所以不能来更新UI，我们在FeedBackActivity类中创建静态内部类InnerHander使其继承自Handler，此外，由于数据无法直接传递给ListView，我们需要借助适配器（Adapter）来完成，在news.adapter包下新建FeedBackAdapter类，使其继承自BaseAdapter，修改FeedBackAdapter类，我们采用两种不同的adapter将数据显示出来，因此会有两种不同的view，因此我们首先判断要返回什么类型的view<br>
 （4）在layout文件夹下新建item_feedback.xml布局文件，用于表示跟帖的布局，编写布局文件，用户的头像我们采用CircleImageView圆形控件，为了显示用户头像下的vip，我们采用在RelativeLayout布局下叠加两张ImageView<br>
 ### 7、首页优化<br>
-包含Commits-15，详细步骤如下：<br>
+包含Commits-15、Commits-16，详细步骤如下：<br>
 （1）问题一：当我们点击其他页面再返回热点新闻时，热点新闻变为空<br>
 产生原因：原生的FragmentTabHost中调用的detach()和attach()方法会将我们热点新闻的fragment杀死，再次返回时又不能创建新的view<br>
 解决方法：重写一个FragmentTabHost，在Util包下新建FragmentTabHost，并修改detach()和attach()对应为hide()和show()方法，在切换时我们杀死view而是将其隐藏，加入判断，如果fragment被隐藏，则show()出来，否则继续调用attach()方法，方法修改完成后，继续修改activity_main.xml布局文件，由于之前在不久文件中引入的是android.support.v4.app.FragmentTabHost，我们对其进行修改，引入我们修改之后的FragmentTabHost，<br>
@@ -79,7 +79,7 @@
 解决方法：增加下拉刷新控件，在build.gradle中引入android-Ultra-Pull-To-Refresh的依赖compile 'in.srain.cube:ultra-ptr:1.0.11'，修改fragment_hot.xml，让其包住需要下拉刷新的控件，并在HotFragment中进行设置<br>
 （6）问题六：首页栏目无法动态更换<br>
 产生原因：未实现该功能<br>
-解决方法：向首页栏目添加切换功能，修改fragment_new.xml布局文件，向其中加入添加按钮，为了给控件添加旋转效果，我们在res文件夹下的anim目录中创建add_up.xml和add_down.xml，修改NewsFragment，在drawable文件件下新建conner_white_back.xml和conner_red_back.xml，在点击之前，按钮为白底黑字，为了做selector，我们在color包下新建title_color.xml，使得点击按钮后变为红底白字，为了点击“+”按钮出现另一个动画，我们在anim文件夹下新建top_menu_show.xml和top_menu_hide.xml，为了做到透明的效果，我们修改colors.xml，添加一个70%的白色，为了增加动画下滑的效果，我们在anim目录下新建from_top.xml和to_top.xml文件，我们引入EventBus，在build.gradle中引入EventBus依赖'org.greenrobot:eventbus:3.0.0'，在MainActivity中注册一个监听者，使用注解模式进行监听，使用完成后对其进行注销，接着在news.bean中新建ShowTabEvent类，修改NewsFragment类对事件进行分发，使动画能够覆盖全屏，修改fragment_new.xml布局文件，由于GridView默认设置的弊端，我们无法在GridView中显示ListView，我们在util包下新建NoScrollGridView使其继承自GridView，重写其onMeasure()方法，在news.adapter包下新建ShowAdapter使其继承自BaseAdapter，在layout下创建其对应的布局文件item_show.xml<br>
+解决方法：向首页栏目添加切换功能，修改fragment_new.xml布局文件，向其中加入添加按钮，为了给控件添加旋转效果，我们在res文件夹下的anim目录中创建add_up.xml和add_down.xml，修改NewsFragment，在drawable文件件下新建conner_white_back.xml和conner_red_back.xml，在点击之前，按钮为白底黑字，为了做selector，我们在color包下新建title_color.xml，使得点击按钮后变为红底白字，为了点击“+”按钮出现另一个动画，我们在anim文件夹下新建top_menu_show.xml和top_menu_hide.xml，为了做到透明的效果，我们修改colors.xml，添加一个70%的白色，为了增加动画下滑的效果，我们在anim目录下新建from_top.xml和to_top.xml文件，我们引入EventBus，在build.gradle中引入EventBus依赖'org.greenrobot:eventbus:3.0.0'，在MainActivity中注册一个监听者，使用注解模式进行监听，使用完成后对其进行注销，接着在news.bean中新建ShowTabEvent类，修改NewsFragment类对事件进行分发，使动画能够覆盖全屏，修改fragment_new.xml布局文件，由于GridView默认设置的弊端，我们无法在GridView中显示ListView，我们在util包下新建NoScrollGridView使其继承自GridView，重写其onMeasure()方法，在news.adapter包下新建ShowAdapter使其继承自BaseAdapter，在layout下创建其对应的布局文件item_show.xml，至此，切换栏目已完全可以显示/隐藏，接下来我们继续向其添加功能，首先在ListView中删除数据，修改item_show.xml布局文件，在其左上角添加删除圆圈，接下来修改NewsFragment、ShowAdapter和NewAdapter三个文件<br>
 （7）问题七：首页栏目之间存在分隔线<br>
 产生原因：间隔线有颜色（灰色）<br>
 解决方法：借助于SmartTabLayout中的方法设置分隔线为透明，修改NewsFragment<br>
@@ -130,3 +130,6 @@
 ### Commits-15:(HomePageOptomize Finish)<br>
 内容：完成首页优化，包括：1、重写一个FragmentTabHost；2、适配沉浸式；3、增加数据加载页面；4、为Http设置合理的超时；5、增加下拉刷新控件；6、向首页栏目添加切换功能（可以显示/隐藏，还未添加功能）；7、取消首页栏目之间存在分隔线；<br>
 ![](https://github.com/ambition-hb/News_1/raw/master/Pic/homepage_optimize.png)<br>
+### Commits-16:(HomePageColumn Finish)<br>
+内容：完成向首页栏目切换功能（可以显示/隐藏）<br>
+![](https://github.com/ambition-hb/News_1/raw/master/Pic/homepage_column.png)<br>
