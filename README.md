@@ -55,12 +55,34 @@
 （5）在news.adapter包下新建DetailImageAdapter文件，使其继承自PagerAdapter，为了更高的展示点击图片后的图片详情页面，我们新建DetailImageAdapter文件的布局文件item_detail_img.xml，为了在进程间传递对象，我们将DetailWebImage类实现了Serializable接口<br>
 （6）总结：我们通过拼装HTML代码的方法，然后再通过WebView显示，最后与Java代码进行交互<br>
 ### 6、热点新闻详情页面——新闻跟帖页面<br>
-包含Commits-14→Commits-x，详细步骤如下：<br>
+包含Commits-14，详细步骤如下：<br>
 （1）在news.activity包下新建FeedBackActivity类，在layout文件夹下创建其对应的布局文件activity_feedback.xml，在FeedBackActivity中绑定布局文件，修改util包下的Constant类，添加回帖页面的地址及替换方法，再修改DetailActivity，为replayCountTextView添加点击事件，使得点击跟帖数可以跳转到跟帖页面，最后在AndroidManifest.xml文件中对FeedBackActivity进行注册<br>
 （2）在news.bean包下新建FeedBack和FeedBacks两个类，FeedBack用于封装单条回帖的数据，而FeedBacks则包含FeedBack，每次解析完FeedBack，就会将FeedBack加到我们的数据中，由于遍历的过程是无序的，我们在FeedBacks类中添加sort()方法以及比较器，对于JSONObject中的key-value形式的数据进行排序（按照key），key越大表示回帖时间最新，对应的value就是我们想要显示的回帖数据<br>
 （3）由于HttpUtil是运行在子线程的，所以不能来更新UI，我们在FeedBackActivity类中创建静态内部类InnerHander使其继承自Handler，此外，由于数据无法直接传递给ListView，我们需要借助适配器（Adapter）来完成，在news.adapter包下新建FeedBackAdapter类，使其继承自BaseAdapter，修改FeedBackAdapter类，我们采用两种不同的adapter将数据显示出来，因此会有两种不同的view，因此我们首先判断要返回什么类型的view<br>
-（4）在layout文件夹下新建item_feedback.xml布局文件，用于表示跟帖的布局，编写布局文件，用户的头像我们采用CircleImageView圆形控件，为了显示用户头像下的vip，我们采用在RelativeLayout布局下叠加两张ImageView，<br>
-
+（4）在layout文件夹下新建item_feedback.xml布局文件，用于表示跟帖的布局，编写布局文件，用户的头像我们采用CircleImageView圆形控件，为了显示用户头像下的vip，我们采用在RelativeLayout布局下叠加两张ImageView<br>
+### 7、首页优化<br>
+包含Commits-15，详细步骤如下：<br>
+（1）问题一：当我们点击其他页面再返回热点新闻时，热点新闻变为空<br>
+产生原因：原生的FragmentTabHost中调用的detach()和attach()方法会将我们热点新闻的fragment杀死，再次返回时又不能创建新的view<br>
+解决方法：重写一个FragmentTabHost，在Util包下新建FragmentTabHost，并修改detach()和attach()对应为hide()和show()方法，在切换时我们杀死view而是将其隐藏，加入判断，如果fragment被隐藏，则show()出来，否则继续调用attach()方法，方法修改完成后，继续修改activity_main.xml布局文件，由于之前在不久文件中引入的是android.support.v4.app.FragmentTabHost，我们对其进行修改，引入我们修改之后的FragmentTabHost，<br>
+（2）问题二：之前引入的沉浸式没有进行很好的适配<br>
+产生原因：Android在4.4版本以后推出了沉浸式，并支持透明的状态栏，但是4.4以下没有适配<br>
+解决方法：为了适配4.4以上版本，我们在res文件夹下新建values-v19，并在其中新建styles.xml文件，编写style并增加属性，在res.values目录下的styles.xml中我们增加一个同名的style并增加属性，最后再修改AndroidManifest.xml文件，为MainActivity增加主题，为了更好的适配，我们采用增加一个和标题栏相同高度的图片放置在屏幕顶端，修改activity_main.xml，在布局中增加一个图片，接下里修改MainActivity，首先获取当前的版本信息，然后进行比对（通过反射机制获取到了系统标题栏的高度），最后决定是否进行适配，<br>
+（3）问题三：每次进入首页时，数据加载慢<br>
+产生原因：第一次访问，需要请求的数据比较多，需要一定时间去处理<br>
+解决方法：增加数据加载页面，在layout文件夹下新建include_loading.xml布局文件，添加ImageView作为加载时显示的页面，最后将其加载进fragment_hot.xml布局中，修改HotFragment文件，如果没有view（即view未加载完成）则显示这个view<br>
+（4）问题四：Http如果未请求到数据会一直请求，导致阻塞<br>
+产生原因：Http请求未设置超时<br>
+解决方法：为Http设置合理的超时，connectionTimeout设置连接超时，readTimeout设置读取超时，writeTimeout设置写入超时<br>
+（5）问题五：新闻数据无法刷新<br>
+产生原因：没有控件进行数据的再次请求<br>
+解决方法：增加下拉刷新控件，在build.gradle中引入android-Ultra-Pull-To-Refresh的依赖compile 'in.srain.cube:ultra-ptr:1.0.11'，修改fragment_hot.xml，让其包住需要下拉刷新的控件，并在HotFragment中进行设置<br>
+（6）问题六：首页栏目无法动态更换<br>
+产生原因：未实现该功能<br>
+解决方法：向首页栏目添加切换功能，修改fragment_new.xml布局文件，向其中加入添加按钮，为了给控件添加旋转效果，我们在res文件夹下的anim目录中创建add_up.xml和add_down.xml，修改NewsFragment，在drawable文件件下新建conner_white_back.xml和conner_red_back.xml，在点击之前，按钮为白底黑字，为了做selector，我们在color包下新建title_color.xml，使得点击按钮后变为红底白字，为了点击“+”按钮出现另一个动画，我们在anim文件夹下新建top_menu_show.xml和top_menu_hide.xml，为了做到透明的效果，我们修改colors.xml，添加一个70%的白色，为了增加动画下滑的效果，我们在anim目录下新建from_top.xml和to_top.xml文件，我们引入EventBus，在build.gradle中引入EventBus依赖'org.greenrobot:eventbus:3.0.0'，在MainActivity中注册一个监听者，使用注解模式进行监听，使用完成后对其进行注销，接着在news.bean中新建ShowTabEvent类，修改NewsFragment类对事件进行分发，使动画能够覆盖全屏，修改fragment_new.xml布局文件，由于GridView默认设置的弊端，我们无法在GridView中显示ListView，我们在util包下新建NoScrollGridView使其继承自GridView，重写其onMeasure()方法，在news.adapter包下新建ShowAdapter使其继承自BaseAdapter，在layout下创建其对应的布局文件item_show.xml<br>
+（7）问题七：首页栏目之间存在分隔线<br>
+产生原因：间隔线有颜色（灰色）<br>
+解决方法：借助于SmartTabLayout中的方法设置分隔线为透明，修改NewsFragment<br>
 ### Commits-1:Initial Commit<br>
 内容：初始化<br>
 ### Commits-2:Create Peoject<br>
@@ -105,3 +127,6 @@
 ### Commits-14:(FeedBack Finish)<br>
 内容：完成跟帖界面的布局以及数据展示<br>
 ![](https://github.com/ambition-hb/News_1/raw/master/Pic/feedback.png)<br>
+### Commits-15:(HomePageOptomize Finish)<br>
+内容：完成首页优化，包括：1、重写一个FragmentTabHost；2、适配沉浸式；3、增加数据加载页面；4、为Http设置合理的超时；5、增加下拉刷新控件；6、向首页栏目添加切换功能（可以显示/隐藏，还未添加功能）；7、取消首页栏目之间存在分隔线；<br>
+![](https://github.com/ambition-hb/News_1/raw/master/Pic/homepage_optimize.png)<br>

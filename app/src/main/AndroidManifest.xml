@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".splash.activity.WebViewActivity"/>
-        <activity android:name=".MainActivity"/>
+        <activity android:name=".MainActivity" android:theme="@style/title_trans"/>
         <service android:name=".service.DownloadImageService"/>
         <activity android:name=".news.activity.DetailActivity" android:theme="@style/back_transparent"/>
         <activity android:name=".news.activity.DetailImageActivity"/>

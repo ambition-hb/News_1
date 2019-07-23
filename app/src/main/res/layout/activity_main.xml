@@ -5,13 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/status" />
+
     <FrameLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
-    <android.support.v4.app.FragmentTabHost
+    <com.haobi.news_1.util.FragmentTabHost
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tab_Host">
@@ -28,6 +33,6 @@
 
         </LinearLayout>
 
-    </android.support.v4.app.FragmentTabHost>
+    </com.haobi.news_1.util.FragmentTabHost>
     
 </LinearLayout>

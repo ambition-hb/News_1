@@ -22,9 +22,9 @@ public class  HttpUtil {
 
     private HttpUtil(){
         client = new OkHttpClient.Builder()
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(10, TimeUnit.SECONDS)//设置连接超时
+                .writeTimeout(10, TimeUnit.SECONDS)//设置读取超时
+                .readTimeout(30, TimeUnit.SECONDS)//设置写入超时
                 .build();
     }
 
